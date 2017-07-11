@@ -1,0 +1,9 @@
+[Unit]
+Description=Simple Search Server
+
+[Service]
+Type=simple
+ExecStart=/home/searchServer/index.js
+
+[Install]
+WantedBy=multi-user.target

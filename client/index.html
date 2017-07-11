@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Search</title>
+</head>
+<body class="">
+  <div style="position: fixed; top: 0; left: 0; padding: 10px 5vw; background: white; width: 100%;border-bottom: solid 1px;">
+    <input type="text" id="searchString">
+    <select name="" id="language">
+      <option value="de">Deutsch</option>
+      <option value="en">Britisch</option>
+      <option value="en-US">Amerikanisch</option>
+    </select>
+    <button id="searchButton">Suchen</button>
+  </div>
+  <pre style="white-space: pre-wrap; margin: 0 5vw; padding-top: 50px;" id="output"> </pre>
+  <script>
+    let searchstringInput = document.getElementById('searchString'),
+        languageInput = document.getElementById('language'),
+        searchButton = document.getElementById('searchButton'),
+        loading = false,
+        triggerSearch = () => {
+          output.innerHTML = "Searching ..."
+          if (!loading) {
+            loading = !loading;
+            fetch(`/grep?search=${searchstringInput.value}&language=${languageInput.value}`)
+              .then(res => res.text())
+              .then(text => {
+                output.innerHTML = text.replace(/\n/g, '\n\n').replace(/\.xml:\s*/g, '.xml:\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').split(searchstringInput.value).join(`<b>${searchstringInput.value}</b>`);
+                loading = !loading;
+              })
+              .catch(() => {
+                loading = !loading;
+              });
+          }
+        };
+
+    searchstringInput.addEventListener('keydown', (evt)=>{
+      if(evt.keyCode === 13) {
+        triggerSearch();
+      }
+    })
+    searchButton.addEventListener('click', triggerSearch)
+  </script>
+</body>
+</html>
